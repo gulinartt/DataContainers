@@ -176,4 +176,5 @@ void main()
 	cout << "Введите индекс удаляемого элемента: "; cin >> index;
 	list.erase(index);
 	list.print();
+	list.reverse_print();
 }

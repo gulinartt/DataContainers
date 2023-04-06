@@ -1,4 +1,4 @@
-#include<iostream>
+п»ї#include<iostream>
 using namespace std;
 
 #define tab "\t"
@@ -21,7 +21,7 @@ class List
 			cout << "EDestructor:\t" << this << endl;
 		}
 		friend class List;
-	}*Head, * Tail; // Создали указатели на объекты класса за классом
+	}*Head, * Tail; // РЎРѕР·РґР°Р»Рё СѓРєР°Р·Р°С‚РµР»Рё РЅР° РѕР±СЉРµРєС‚С‹ РєР»Р°СЃСЃР° Р·Р° РєР»Р°СЃСЃРѕРј
 	size_t size;
 public:
 	List()
@@ -38,26 +38,26 @@ public:
 	}
 
 	//				Adding elemnts:
-	void push_front(int Data) // Метод, кот добавляет элемент в начало списка
+	void push_front(int Data) // РњРµС‚РѕРґ, РєРѕС‚ РґРѕР±Р°РІР»СЏРµС‚ СЌР»РµРјРµРЅС‚ РІ РЅР°С‡Р°Р»Рѕ СЃРїРёСЃРєР°
 	{
 		if (Head == nullptr && Tail == nullptr)
 		{
 			Head = Tail = new Element(Data);
 			size++;
-			return;	//Ключевое слово 'return' прерывает работу функции  
-			        //и возвращает управление на место вызова. 
+			return;	//РљР»СЋС‡РµРІРѕРµ СЃР»РѕРІРѕ 'return' РїСЂРµСЂС‹РІР°РµС‚ СЂР°Р±РѕС‚Сѓ С„СѓРЅРєС†РёРё  
+			        //Рё РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРїСЂР°РІР»РµРЅРёРµ РЅР° РјРµСЃС‚Рѕ РІС‹Р·РѕРІР°. 
 		}
-		//1) Создаем новый элемент:
+		//1) РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚:
 		Element* New = new Element(Data);
-		//2) Пристыковываем новый элемент к списку:
+		//2) РџСЂРёСЃС‚С‹РєРѕРІС‹РІР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚ Рє СЃРїРёСЃРєСѓ:
 		New->pNext = Head;
-		//3) Пристыковываем список к новому элементу:
+		//3) РџСЂРёСЃС‚С‹РєРѕРІС‹РІР°РµРј СЃРїРёСЃРѕРє Рє РЅРѕРІРѕРјСѓ СЌР»РµРјРµРЅС‚Сѓ:
 		Head->pPrev = New;
-		//4) Переводим голову на новый элемент:
+		//4) РџРµСЂРµРІРѕРґРёРј РіРѕР»РѕРІСѓ РЅР° РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚:
 		Head = New;
 		size++;
 	}
-	void push_back(int Data) // Добавляет элемент в конец списка
+	void push_back(int Data) // Р”РѕР±Р°РІР»СЏРµС‚ СЌР»РµРјРµРЅС‚ РІ РєРѕРЅРµС† СЃРїРёСЃРєР°
 	{
 		if (Head == nullptr && Tail == nullptr)return push_front(Data);
 		Element* New = new Element(Data);
@@ -69,7 +69,7 @@ public:
 	void insert(int Data, int Index)
 	{
 		if (Index > size)return;
-		Element* Temp; // Итератор
+		Element* Temp; // РС‚РµСЂР°С‚РѕСЂ
 		if (Index < size / 2)
 		{
 			Temp = Head;
@@ -80,12 +80,12 @@ public:
 			Temp = Tail;
 			for (int i = 0; i < size - Index - 1; i++)Temp = Temp->pPrev;
 		}
-		//1) Создаем новый элемент:
+		//1) РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚:
 		Element* New = new Element(Data);
-		//2) Пристыковываем новый элемент к списку:
+		//2) РџСЂРёСЃС‚С‹РєРѕРІС‹РІР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚ Рє СЃРїРёСЃРєСѓ:
 		New->pNext = Temp;
 		New->pPrev = Temp->pPrev;
-		//3) Пристыковываем список к элементу:
+		//3) РџСЂРёСЃС‚С‹РєРѕРІС‹РІР°РµРј СЃРїРёСЃРѕРє Рє СЌР»РµРјРµРЅС‚Сѓ:
 		Temp->pPrev->pNext = New;
 		Temp->pPrev = New;
 
@@ -102,11 +102,11 @@ public:
 			Head = Tail = nullptr;
 			return;
 		}
-		//1) Исключаем элемент из списка:
+		//1) РСЃРєР»СЋС‡Р°РµРј СЌР»РµРјРµРЅС‚ РёР· СЃРїРёСЃРєР°:
 		Head = Head->pNext;
-		//2) Удаляем элемнт из памяти:
+		//2) РЈРґР°Р»СЏРµРј СЌР»РµРјРЅС‚ РёР· РїР°РјСЏС‚Рё:
 		delete Head->pPrev;
-		//3) "Забываем" про удаленный элемент:
+		//3) "Р—Р°Р±С‹РІР°РµРј" РїСЂРѕ СѓРґР°Р»РµРЅРЅС‹Р№ СЌР»РµРјРµРЅС‚:
 		Head->pPrev = nullptr;
 		size--;
 	}
@@ -124,13 +124,13 @@ public:
 	{
 		for (Element* Temp = Head; Temp; Temp = Temp->pNext)
 			cout << Temp->pPrev << tab << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
-		cout << "Количество элементов списка: " << size << endl;
+		cout << "РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°: " << size << endl;
 	}
-	void reverse_print()const // Выводит список на экран в обратном направлении, задом наперед
+	void reverse_print()const // Р’С‹РІРѕРґРёС‚ СЃРїРёСЃРѕРє РЅР° СЌРєСЂР°РЅ РІ РѕР±СЂР°С‚РЅРѕРј РЅР°РїСЂР°РІР»РµРЅРёРё, Р·Р°РґРѕРј РЅР°РїРµСЂРµРґ
 	{
 		for (Element* Temp = Tail; Temp; Temp = Temp->pPrev)
 			cout << Temp->pPrev << tab << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
-		cout << "Количество элементов списка: " << size << endl;
+		cout << "РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°: " << size << endl;
 	}
 };
 
@@ -138,7 +138,7 @@ void main()
 {
 	setlocale(LC_ALL, "");
 	int n;
-	cout << "Введите размер списка: "; cin >> n;
+	cout << "Р’РІРµРґРёС‚Рµ СЂР°Р·РјРµСЂ СЃРїРёСЃРєР°: "; cin >> n;
 	List list;
 	for (int i = 0; i < n; i++)
 	{
@@ -149,8 +149,8 @@ void main()
 
 	int value;
 	int index;
-	cout << "Введите индекс добавляемого элемента: "; cin >> index;
-	cout << "Введите значение добавляемого элемента: "; cin >> value;
+	cout << "Р’РІРµРґРёС‚Рµ РёРЅРґРµРєСЃ РґРѕР±Р°РІР»СЏРµРјРѕРіРѕ СЌР»РµРјРµРЅС‚Р°: "; cin >> index;
+	cout << "Р’РІРµРґРёС‚Рµ Р·РЅР°С‡РµРЅРёРµ РґРѕР±Р°РІР»СЏРµРјРѕРіРѕ СЌР»РµРјРµРЅС‚Р°: "; cin >> value;
 	list.insert(value, index);
 	list.print();
 	list.reverse_print();

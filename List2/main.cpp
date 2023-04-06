@@ -22,7 +22,7 @@ class List
 		}
 		friend class List;
 	}*Head, * Tail; // Создали указатели на объекты класса за классом
-	size_t size;
+    size_t size;
 public:
 	List()
 	{
@@ -91,7 +91,25 @@ public:
 
 		size++;
 	}
-
+	void erase(int Index)
+	{
+		if (Index > size)return;
+		Element* Temp;
+		if (Index > size / 2)
+		{
+			Temp = Head;
+			for (int i = 0; i < Index; i++)Temp = Temp->pNext;
+		}
+		else
+		{
+			Temp = Tail;
+			for (int i = 0; i < size - Index - 1; i++)Temp = Temp->pPrev;
+		}
+		Temp->pNext = Temp->pNext->pNext;
+		delete Temp->pNext;
+		Temp->pNext = nullptr;
+		size--;
+	}
 	//					Removing elements:
 	void pop_front() 
 	{
@@ -154,4 +172,8 @@ void main()
 	list.insert(value, index);
 	list.print();
 	list.reverse_print();
+
+	cout << "Введите индекс удаляемого элемента: "; cin >> index;
+	list.erase(index);
+	list.print();
 }

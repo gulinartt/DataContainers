@@ -3,7 +3,7 @@ using namespace std;
 
 #define tab "\t"
 
-class List
+class ForwardList
 {
 	class Element
 	{
@@ -20,17 +20,123 @@ class List
 		{
 			cout << "EDestructor:\t" << this << endl;
 		}
-		friend class List;
+		friend class ForwardList;
 	}*Head, * Tail; // Создали указатели на объекты класса за классом
     size_t size;
 public:
-	List()
+	class Iterator
+	{
+		Element* Temp;
+	public:
+		Iterator(Element* Temp = nullptr) :Temp(Temp)
+		{
+			cout << "ItConstructor:\t" << this << endl;
+		}
+		~Iterator()
+		{
+			cout << "ItDestructor:\t" << this << endl;
+		}
+
+		Iterator& operator++() //Prefix increment
+		{
+			Temp = Temp->pNext;
+			return *this;
+		}
+		Iterator operator++(int)
+		{
+			Iterator old = *this;
+			Temp = Temp->pNext;
+			return old;
+		}
+		Iterator& operator--()
+		{
+			Temp = Temp->pPrev;
+			return *this;
+		}
+		Iterator operator--(int)
+		{
+			Iterator old = *this;
+			Temp = Temp->pPrev;
+			return old;
+		}
+
+		bool operator==(const Iterator& other)const
+		{
+			return this->Temp == other.Temp;
+		}
+		bool operator!=(const Iterator& other)const
+		{
+			return this->Temp != other.Temp;
+		}
+
+		const int& operator*()const
+		{
+			return Temp->Data;
+		}
+		int& operator*()
+		{
+			return Temp->Data;
+		}
+	};
+	class ReverseIterator
+	{
+		Element* Temp;
+	public:
+		ReverseIterator(Element* Temp) :Temp(Temp)
+		{
+			cout << "RItConstructor:\t" << this << endl;
+		}
+		~ReverseIterator()
+		{
+			cout << "RItDestructor:\t" << this << endl;
+		}
+
+		ReverseIterator& operator++()
+		{
+			Temp = Temp->pPrev;
+			return *this;
+		}
+		ReverseIterator operator++(int)
+		{
+			ReverseIterator old = *this;
+			Temp = Temp->pPrev;
+			return old;
+		}
+		ReverseIterator& operator--()
+		{
+			Temp = Temp->pNext;
+			return *this;
+		}
+		ReverseIterator operator--(int)
+		{
+			ReverseIterator old = *this;
+			Temp = Temp->pNext;
+			return old;
+		}
+	};
+	Iterator begin()
+	{
+		return Head;
+	}
+	Iterator end()
+	{
+		return nullptr;
+	}
+	//				Constructors:
+	ForwardList()
 	{
 		Head = Tail = nullptr;
 		size = 0;
 		cout << "LConstructor:\t" << this << endl;
 	}
-	~List()
+	ForwardList(const std::initializer_list<int>& il):ForwardList()
+	{
+		for (int const* it = il.begin(); it != il.end(); it++)
+		{
+			push_back(*it);
+		}
+	}
+	~ForwardList()
 	{
 		//while (Head)pop_front();
 		while (Tail)pop_back();
@@ -47,7 +153,7 @@ public:
 			return;	//Ключевое слово 'return' прерывает работу функции  
 			        //и возвращает управление на место вызова. 
 		}
-		//1) Создаем новый элемент:
+		/*//1) Создаем новый элемент:
 		Element* New = new Element(Data);
 		//2) Пристыковываем новый элемент к списку:
 		New->pNext = Head;
@@ -55,15 +161,21 @@ public:
 		Head->pPrev = New;
 		//4) Переводим голову на новый элемент:
 		Head = New;
+		size++;*/
+
+		Head = Head->pPrev = new Element(Data, Head);
+
 		size++;
+
 	}
 	void push_back(int Data) // Добавляет элемент в конец списка
 	{
 		if (Head == nullptr && Tail == nullptr)return push_front(Data);
-		Element* New = new Element(Data);
+		/*Element* New = new Element(Data);
 		New->pPrev = Tail;
 		Tail->pNext = New;
-		Tail = New;
+		Tail = New;*/
+		Tail = Tail->pNext = new Element(Data, nullptr, Tail);
 		size++;
 	}
 	void insert(int Data, int Index)
@@ -80,36 +192,20 @@ public:
 			Temp = Tail;
 			for (int i = 0; i < size - Index - 1; i++)Temp = Temp->pPrev;
 		}
-		//1) Создаем новый элемент:
+		/*//1) Создаем новый элемент:
 		Element* New = new Element(Data);
 		//2) Пристыковываем новый элемент к списку:
 		New->pNext = Temp;
 		New->pPrev = Temp->pPrev;
 		//3) Пристыковываем список к элементу:
 		Temp->pPrev->pNext = New;
-		Temp->pPrev = New;
+		Temp->pPrev = New;*/
+
+		Temp->pPrev = Temp->pPrev->pNext = new Element(Data, Temp, Temp->pPrev);
 
 		size++;
 	}
-	void erase(int Index)
-	{
-		if (Index > size)return;
-		Element* Temp;
-		if (Index > size / 2)
-		{
-			Temp = Head;
-			for (int i = 0; i < Index; i++)Temp = Temp->pNext;
-		}
-		else
-		{
-			Temp = Tail;
-			for (int i = 0; i < size - Index - 1; i++)Temp = Temp->pPrev;
-		}
-		Temp->pNext = Temp->pNext->pNext;
-		delete Temp->pNext;
-		Temp->pNext = nullptr;
-		size--;
-	}
+
 	//					Removing elements:
 	void pop_front() 
 	{
@@ -152,9 +248,14 @@ public:
 	}
 };
 
+//#define BASE_CHECK
+
 void main()
 {
 	setlocale(LC_ALL, "");
+
+#ifdef BASE_CHECK
+
 	int n;
 	cout << "Введите размер списка: "; cin >> n;
 	List list;
@@ -177,4 +278,15 @@ void main()
 	list.erase(index);
 	list.print();
 	list.reverse_print();
+#endif // BASE_CHECK
+	
+	ForwardList list = { 3,5,8,13,21 };
+	//list.print();
+	//list.reverse_print();
+	for (int i : list)
+	{
+		cout << i << tab;
+	}
+	cout << endl;
+
 }

@@ -1,5 +1,9 @@
+//ForwardList
 #include<iostream>
 using namespace std;
+using std::cin;
+using std::cout;
+using std::endl;
 
 #define tab "\t"
 #define delimiter "\n---------------------------------------------------\n"
@@ -25,24 +29,103 @@ public:
 	}
 	friend class ForwardList; //это открывает нам пр€мой доступ к 
 	//закрытым пол€м элемента из класса список
+	friend ForwardList operator+(const ForwardList& left, const ForwardList& right);
+	friend class Iterator;
 };
 
 int Element::count = 0; //—татическую переменную можно проинициализировать только за пределами класса
+
+class Iterator //class Iterator пишем дл€ обеспечени€ операций над итератором
+{
+	Element* Temp;
+public:
+	Iterator(Element* Temp) :Temp(Temp)
+	{
+		cout << "ItConstructor:\t" << this << endl;
+	}
+	~Iterator()
+	{
+		cout << "ItDestructor:\t" << this << endl;
+	}
+	Iterator& operator++()
+	{
+		Temp = Temp->pNext;
+		return *this;
+	}
+	bool operator==(const Iterator& other)const
+	{
+		return this->Temp == other.Temp;
+	}
+	bool operator!=(const Iterator& other)const
+	{
+		return this->Temp != other.Temp;
+	}
+	int& operator*()
+	{
+		return Temp->Data;
+	}
+};
 
 class ForwardList
 {
 	Element* Head;
 	unsigned int size;
 public:
+	Iterator begin()
+	{
+		return Head;
+	}
+	Iterator end()
+	{
+		return nullptr;
+	}
 	ForwardList() //конструктор по умолчанию, который создает пустой список
 	{
 		Head = nullptr; //если список пуст, то его голова указывает на 0
 		size = 0;
 		cout << "LConstructor:\t" << this << endl;
 	}
+	ForwardList(initializer_list<int> il) :ForwardList()
+	{
+		cout << typeid(il.begin()).name() << endl;
+		for (int const* it = il.begin(); it != il.end(); it++)
+		{
+			push_back(*it);
+		}
+	}
+	ForwardList(const ForwardList& other) :ForwardList() //конструктор копировани€
+	{
+		*this = other;
+	}
+	ForwardList(ForwardList&& other) :ForwardList() //MoveConstructor - конструктор переноса
+	{
+		*this = std::move(other); //move - это функци€
+	}
 	~ForwardList()
 	{
+		while (Head)pop_front();
 		cout << "LDestructor:\t" << this << endl;
+	}
+
+	//				Operators:
+	ForwardList& operator=(const ForwardList& other)
+	{
+		if (this == &other)return *this;
+		//прежде чем делать побитовое копирование, удалить старые значени€:
+		while (Head)pop_front();
+		for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
+			push_back(Temp->Data);
+		return *this;
+	}
+	ForwardList& operator=(ForwardList&& other) // MoveAssignment
+	{
+		if (this == &other)return *this;
+		while (Head)pop_front();
+		this->Head = other.Head;
+		this->size = other.size;
+		other.Head = nullptr;
+		other.size = 0;
+		return *this;
 	}
 
 	//				Adding elements:
@@ -131,6 +214,21 @@ public:
 		Temp->pNext = nullptr;
 		size--;
 	}
+	void erase(int Index)
+	{
+		if (Index == 0)return pop_front();
+		if (Index > size)return;
+		//1) ƒоходим до элемента перед удал€емым:
+		Element* Temp = Head;
+		for (int i = 0; i < Index - 1; i++)Temp = Temp->pNext;
+		//2) «апоминаем адрес удал€емого элемента:
+		Element* Erased = Temp->pNext;
+		//3) »сключаем удал€емый элемент из списка:
+		Temp->pNext = Temp->pNext->pNext;
+		//4) ”дал€ем элемент из пам€ти:
+		delete Erased;
+		size--;
+	}
 
 	//				Methods:
 	void print()const
@@ -153,11 +251,37 @@ public:
 		//по хорошему к статическим переменным обращаютс€ так Element::count, потому что они наход€тс€ в классе
 		//а не в объектах, и это нужно показать вот таким вот образом
 	}
+	friend ForwardList operator+(const ForwardList& left, const ForwardList& right);
 };
+
+ForwardList operator+(const ForwardList& left, const ForwardList& right)
+{
+	ForwardList cat = left; //фактически оператор плюс выполн€ет конкатенацию списков
+	for (Element* Temp = right.Head; Temp; Temp = Temp->pNext)cat.push_back(Temp->Data);
+	return cat; //cat локальна€ переменна€, поэтому удал€етс€, нужен конструктор копировани€ в классе, 
+	            //чтобы он копировалс€ на место вызова
+}
+
+//#define BASE_CHECK
+//#define OPERATOR_PLUS
+//#define RANGE_BASE_FOR_ARRAY
+
+void print(int arr[]) //когда мы передаем в функцию массив, то в функцию копируетс€ 
+                      //указательна этот массив
+{
+	cout << typeid(arr).name() << endl; //указатель на массив
+	cout << sizeof(arr) << endl; //возвращаетс€ адрес указател€ в байтах
+	/*for (int i : arr)
+	{
+		cout << i << tab;
+	}
+	cout << endl;*/
+}
 
 void main()
 {
 	setlocale(LC_ALL, "");
+#ifdef BASE_CHECK
 	int n;
 	cout << "¬ведите размер списка: "; cin >> n;
 	ForwardList list;
@@ -178,9 +302,66 @@ void main()
 	list.insert(value, index);
 	list.print();
 
+	cout << "¬ведите индекс удал€емого элемента: "; cin >> index;
+	list.erase(index);
+	list.print();
+
+	/*ForwardList list2;
+	list2.push_back(34);
+	list2.push_back(55);
+	list2.push_back(89);
+	list2.print(); */
+#endif // BASE_CHECK
+
+
+#ifdef OPERATOR_PLUS
+	ForwardList list1;
+	list1.push_back(3);
+	list1.push_back(5);
+	list1.push_back(8);
+	list1.push_back(13);
+	list1.push_back(21);
+	list1.print();
+	list1 = list1;
+
 	ForwardList list2;
 	list2.push_back(34);
 	list2.push_back(55);
 	list2.push_back(89);
-	list2.print(); 
+	list2.print();
+
+	//ForwardList list3 = list1 + list2; //CopyConstructor
+	cout << delimiter << endl;
+	ForwardList list3;
+	list3 = list1 + list2; //оператор присваивани€ должен делать побитовое копирование, 
+	                       //также как и конструктор копировани€
+	cout << delimiter << endl;
+	list3.print();
+#endif // OPERATOR_PLUS
+
+#ifdef RANGE_BASE_FOR_ARRAY
+	int arr[] = { 3, 5, 8, 13, 21 };
+	for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); i++)
+	{
+		cout << arr[i] << tab;
+	}
+	cout << endl;
+	cout << typeid(arr).name() << endl; //тип данных массива - п€ть элементов типа int
+	cout << sizeof(arr) << endl; //размер массива в байтах
+
+	for (int i : arr)
+	{
+		cout << i << tab;
+	}
+	cout << endl;
+	print(arr);
+#endif // RANGE_BASE_FOR_ARRAY
+
+	ForwardList list = { 3, 5, 8, 13, 21 };
+	//list.print();
+	for(int i:list)
+	{
+		cout << i << tab;
+	}
+	cout << endl;
 }

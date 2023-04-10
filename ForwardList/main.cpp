@@ -271,11 +271,20 @@ void print(int arr[]) //когда мы передаем в функцию массив, то в функцию копируе
 {
 	cout << typeid(arr).name() << endl; //указатель на массив
 	cout << sizeof(arr) << endl; //возвращается адрес указателя в байтах
-	/*for (int i : arr)
+	for (int i : arr)
 	{
 		cout << i << tab;
 	}
-	cout << endl;*/
+	cout << endl;
+	//3/функция
+}
+void print(const ForwardList& list)
+{
+	for (int i : list)
+	{
+		cout << i << tab;
+	}
+	cout << endl;
 }
 
 void main()
@@ -341,10 +350,16 @@ void main()
 
 #ifdef RANGE_BASE_FOR_ARRAY
 	int arr[] = { 3, 5, 8, 13, 21 };
+
 	for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); i++)
 	{
 		cout << arr[i] << tab;
 	}
+	//2/ если он(функция) не может вот так вот посчитать размер, он тогда ищет begin(), end()
+	//и begin() и end() возвращают итераторы, а в итерараторах мы уже сами обеспечиваем
+	//нужное поведение в зависимости от того какой у нас контейнер
+
+
 	cout << endl;
 	cout << typeid(arr).name() << endl; //тип данных массива - пять элементов типа int
 	cout << sizeof(arr) << endl; //размер массива в байтах
@@ -354,6 +369,9 @@ void main()
 		cout << i << tab;
 	}
 	cout << endl;
+	//1/в main() этот код отработал, но как только мы его вынесли в функцию
+	//прога начинает ругаться
+
 	print(arr);
 #endif // RANGE_BASE_FOR_ARRAY
 

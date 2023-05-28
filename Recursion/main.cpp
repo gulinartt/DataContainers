@@ -8,31 +8,33 @@ void elevator(int floor)
 		cout << "Вы в подвале" << endl;
 		return;
 	}
-	cout << "Вы на " << floor << " этаже " << endl;
-	elevator(floor - 1);
+	cout << "вы на  " << floor << " этаже" << endl;
+	elevator(floor - 1); //гуляет по функции вычитая 1 пока не дойдёт до return
+	cout << "вы на  " << floor << " этаже" << endl;
 }
-
 int factorial(int n)
 {
 	if (n < 0)return 0;
 	/*if (n == 0)return 1;
-	return n * factorial(n - 1);*/
-	return n==0?1:n * factorial(n - 1);
+	else return n * factorial(n - 1);*/
+	return n == 0 ? 1 : n * factorial(n - 1);
 }
 double power(double a, int n)
 {
+	//a - основание степени
+	//n - показатель степени
 	/*if (n == 0)return 1;
 	else if (n > 0)return a * power(a, n - 1);
+	//else return 1 / a * power(a, n + 1);
 	else return 1 / power(a, -n);*/
-	return n == 0 ? 1 : n > 0 ? a * power(a, -n) : 1 / power(a, -n);
+	return n == 0 ? 1 : n > 0 ? a * power(a, n - 1) : 1 / power(a, -n);
 }
-/*void Fibonacci(int n, long long int a = 0, long long int b = 1)
+/*void fibonachi(int n, long long int a = 0, long long int b = 1)
 {
-	if (a >= n)return;
-	cout << a << "\t";
-	Fibonacci(n, b, a + b);
+	if (a>=n)return;
+	cout << a << "   ";
+	fibonachi(n, b, a + b);
 }*/
-
 class Fibonacci
 {
 	static void sequence(int n, long long int a, long long int b)
@@ -42,7 +44,7 @@ class Fibonacci
 		sequence(n, b, a + b);
 	}
 public:
-	static void sequence(int n)
+	void sequence(int n)
 	{
 		sequence(n, 0, 1);
 	}
@@ -50,26 +52,22 @@ public:
 
 void main()
 {
-	setlocale(LC_ALL, "");
+	setlocale(0, "");
 	//cout << "Hello Recursion!";
 	/*int n;
 	cout << "Введите номер этажа: "; cin >> n;
 	elevator(n);*/
-
+	//main();
 	/*int n;
 	cout << "Введите число: "; cin >> n;
 	cout << factorial(n) << endl;*/
-
-	/*int n;
-	double a;
-	cout << "Введите основание: "; cin >> a;
+	/*int a = 0, n = 0;
+	cout << "Введите число: "; cin >> a;
 	cout << "Введите степень: "; cin >> n;
 	cout << a << " ^ " << n << " = " << power(a, n) << endl;*/
 
-	int n;
+	int n = 0;
 	cout << "Введите предел: "; cin >> n;
-	//Fibonacci(n);
-	Fibonacci(n, 200, 300);
+	Fibonacci(n);
 
-	//main();
 }

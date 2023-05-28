@@ -30,11 +30,41 @@ public:
 	friend class ForwardList; //это открывает нам прямой доступ к 
 	//закрытым полям элемента из класса список
 	friend ForwardList operator+(const ForwardList& left, const ForwardList& right);
-	friend class Iterator;
+	friend class ConstIterator;
 };
 
 int Element::count = 0; //Статическую переменную можно проинициализировать только за пределами класса
 
+class ConstIterator 
+{
+	Element* Temp;
+public:
+	ConstIterator(Element* Temp) :Temp(Temp)
+	{
+		cout << "ItConstructor:\t" << this << endl;
+	}
+	~ConstIterator()
+	{
+		cout << "ItDestructor:\t" << this << endl;
+	}
+	ConstIterator& operator++()
+	{
+		Temp = Temp->pNext;
+		return *this;
+	}
+	bool operator==(const ConstIterator& other)const
+	{
+		return this->Temp == other.Temp;
+	}
+	bool operator!=(const ConstIterator& other)const
+	{
+		return this->Temp != other.Temp;
+	}
+	int& operator*()
+	{
+		return Temp->Data;
+	}
+};
 class Iterator //class Iterator пишем для обеспечения операций над итератором
 {
 	Element* Temp;
@@ -65,20 +95,28 @@ public:
 		return Temp->Data;
 	}
 };
-
 class ForwardList
 {
 	Element* Head;
 	unsigned int size;
 public:
-	Iterator begin()
+	ConstIterator begin()
 	{
 		return Head;
 	}
-	Iterator end()
+	ConstIterator end()
 	{
 		return nullptr;
 	}
+	const ConstIterator begin()const
+	{
+		return Head;
+	}
+	const ConstIterator end()const
+	{
+		return nullptr;
+	}
+
 	ForwardList() //конструктор по умолчанию, который создает пустой список
 	{
 		Head = nullptr; //если список пуст, то его голова указывает на 0
@@ -269,19 +307,20 @@ ForwardList operator+(const ForwardList& left, const ForwardList& right)
 void print(int arr[]) //когда мы передаем в функцию массив, то в функцию копируется 
                       //указательна этот массив
 {
-	cout << typeid(arr).name() << endl; //указатель на массив
+	/*cout << typeid(arr).name() << endl; //указатель на массив
 	cout << sizeof(arr) << endl; //возвращается адрес указателя в байтах
 	for (int i : arr)
 	{
 		cout << i << tab;
 	}
-	cout << endl;
+	cout << endl;*/
 	//3/функция
 }
-void print(const ForwardList& list)
-{
-	for (int i : list)
-	{
+void print(const ForwardList& list) // ForwardList передается по константной ссылке
+{                                   //значит в пределах этой функции list является 
+	for (int& i : list)              //константным объектом, а для константного объекта 
+	{                               //могут быть вызваны только константные методы
+		i *= 10;
 		cout << i << tab;
 	}
 	cout << endl;
@@ -376,10 +415,13 @@ void main()
 #endif // RANGE_BASE_FOR_ARRAY
 
 	ForwardList list = { 3, 5, 8, 13, 21 };
-	//list.print();
-	for(int i:list)
+	/*for (int& i : list) //итератор сделали ссылкой на значение элемента int& i
 	{
+		i *= 10;
 		cout << i << tab;
-	}
+	}*/
 	cout << endl;
+	print(list);
+	list.print();
+
 }
